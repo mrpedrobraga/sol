@@ -1,12 +1,16 @@
 [package]
 name = "sol-lang"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 description = "Sol toolchain and library."
+repository = "https://github.com/mrpedrobraga/sol"
 license = "MIT"
 authors = ["mrpedrobraga <mrhenribraga@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "sol"
+path = "src/main.rs"
 
 [dependencies]
 tree-sitter = "0.22.6"
