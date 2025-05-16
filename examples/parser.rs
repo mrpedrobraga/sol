@@ -1,14 +1,8 @@
-use tree_sitter::Parser;
+use sol_lang::parser;
 
 fn main() {
-    let mut parser = Parser::new();
-    parser
-        .set_language(&tree_sitter_sol::language())
-        .expect("Could not load Sol grammar.");
-
-    let source = "[main]\n- Hello, World!";
-
-    let result = parser.parse(source, None).unwrap();
-
-    dbg!(result);
+    let input = std::fs::read_to_string("./examples/test.sol").expect("File to be found");;
+    let (_, script) = parser::p_script(&input).expect("Parsing .sol correctly!");
+    let j = serde_json::to_string_pretty(&script).expect("Stringifying to JSON!");
+    std::fs::write("./examples/test.sol.json", j).expect("Saving to file!");
 }

@@ -1,0 +1,37 @@
+{
+  "scenes": [
+    {
+      "name": "test",
+      "content": [
+        {
+          "t": "Dialogue",
+          "c": {
+            "parts": [
+              {
+                "t": "Text",
+                "c": "Hello there "
+              },
+              {
+                "t": "Expression",
+                "c": {
+                  "t": "Symbol",
+                  "c": {
+                    "path": [
+                      "player",
+                      "name"
+                    ]
+                  }
+                }
+              },
+              {
+                "t": "Text",
+                "c": "!"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "fields": {}
+}
