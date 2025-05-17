@@ -20,13 +20,17 @@ use std::collections::HashMap;
 pub mod ast;
 
 pub fn p_script(input: &str) -> IResult<&str, Script> {
-    let (input, script_entries) = separated_list0(
-        multispace1,
-        alt((
-            map(p_comment, ScriptPart::Comment),
-            map(p_let_scene, ScriptPart::Scene),
-            map(p_field, |(name, expr)| ScriptPart::Field(name, expr)),
-        )),
+    let (input, script_entries) = delimited(
+        multispace0,
+        separated_list0(
+            multispace1,
+            alt((
+                map(p_comment, ScriptPart::Comment),
+                map(p_let_scene, ScriptPart::Scene),
+                map(p_field, |(name, expr)| ScriptPart::Field(name, expr)),
+            )),
+        ),
+        multispace0,
     )
     .parse(input)?;
 
@@ -135,7 +139,9 @@ fn p_narration(input: &str) -> IResult<&str, Narration> {
 fn p_text_part(input: &str) -> IResult<&str, TextPart> {
     alt((
         // Normal text
-        map(is_not("\r\n{"), |s: &str| TextPart::Text(s.to_string())),
+        map(is_not("\r\n{"), |s: &str| {
+            TextPart::Text(s.to_string())
+        }),
         // Interpolation
         map(delimited(tag("{"), p_expression, tag("}")), |e| {
             TextPart::Expression(e)
@@ -231,4 +237,45 @@ fn p_identifier(input: &str) -> IResult<&str, &str> {
         many0_count(alt((alphanumeric1, tag("_")))),
     ))
     .parse(input)
+}
+
+mod tests {
+    use super::p_script;
+    use crate::parser::ast::{Dialogue, Scene, SceneContent, Script, TextPart};
+    use std::collections::HashMap;
+
+    #[test]
+    fn empty() {
+        assert_eq!(
+            p_script(""),
+            Ok((
+                "",
+                Script {
+                    scenes: Vec::new(),
+                    fields: HashMap::new()
+                }
+            ))
+        )
+    }
+
+    #[test]
+    fn simple_scene() {
+        let script = p_script("\n-- Simple scene\n\nscene main\n    - Hello, there!\nend\n");
+
+        assert_eq!(
+            script,
+            Ok((
+                "",
+                Script {
+                    fields: HashMap::new(),
+                    scenes: vec![Scene {
+                        name: "main".to_owned(),
+                        content: vec![SceneContent::Dialogue(Dialogue {
+                            parts: vec![TextPart::Text("Hello, there!".to_owned())]
+                        })]
+                    }]
+                }
+            ))
+        );
+    }
 }
