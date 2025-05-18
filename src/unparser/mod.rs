@@ -17,9 +17,10 @@ pub fn print_script(script: &Script) -> RcDoc {
 pub fn print_scene(scene: &Scene) -> RcDoc {
     RcDoc::text("scene ")
         .append(scene.name.clone())
-        .append(RcDoc::line())
-        .append(RcDoc::intersperse(scene.content.iter().map(print_scene_part), Doc::hardline()).group())
-        .append("\nend").nest(4)
+        .append(RcDoc::hardline())
+        .append(RcDoc::intersperse(scene.content.iter().map(print_scene_part), Doc::hardline()).group()).nest(2)
+        .append(RcDoc::hardline())
+        .append("end")
 }
 
 pub fn print_scene_part(scene_part: &ScenePart) -> RcDoc {
