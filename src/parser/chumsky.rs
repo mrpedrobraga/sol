@@ -46,14 +46,14 @@ fn p_script_part<'src>() -> impl Parser<'src, &'src str, ScriptPart, extra::Err<
         p_scene_def().map(|s| ScriptPart::Scene(s)),
         p_field().map(|f| ScriptPart::Field(f.0, f.1)),
         just("--")
-            .then(none_of("\r\n").repeated().at_least(1).collect::<String>())
-            .map(|_| ScriptPart::Comment(())),
+            .ignore_then(none_of("\r\n").repeated().at_least(1).collect::<String>())
+            .map(|content| ScriptPart::Comment(content)),
         none_of("\r\n]")
             .repeated()
             .at_least(1)
             .collect::<String>()
             .delimited_by(just("--[["), just("]]--"))
-            .map(|_| ScriptPart::Comment(())),
+            .map(|content| ScriptPart::Comment(content)),
     ))
 }
 

@@ -9,7 +9,7 @@ pub struct Script {
 
 pub enum ScriptPart {
     Scene(Scene),
-    Comment(()),
+    Comment(String),
     Field(String, Expression),
 }
 
@@ -27,7 +27,7 @@ pub enum ScenePart {
     Narration(Narration),
     Prompt(Prompt),
     Expression(Expression),
-    Comment(()),
+    Comment(String),
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]

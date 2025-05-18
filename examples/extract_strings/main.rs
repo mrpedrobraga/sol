@@ -1,7 +1,7 @@
 #![allow(unused)]
 use clap::{Args, Parser, Subcommand};
 use polib::{catalog, po_file};
-use sol_lang::parser::nom::p_script;
+use sol_lang::{parser::nom::p_script, unparser::{print_script, render_script}};
 use std::path::{Path, PathBuf};
 
 mod extract;
@@ -20,19 +20,20 @@ fn main() {
 }
 
 fn translate<PSource, PTranslation, PTarget>(
-    source: PSource,
-    translation: PTranslation,
-    target: PTarget,
+    source_path: PSource,
+    translation_path: PTranslation,
+    target_path: PTarget,
 ) where
     PSource: AsRef<Path>,
     PTranslation: AsRef<Path>,
     PTarget: AsRef<Path>,
 {
-    let raw = std::fs::read_to_string(source).expect("Error reading source `.sol` file!");
+    let raw = std::fs::read_to_string(source_path).expect("Error reading source `.sol` file!");
     let (_, script) = p_script(&raw).expect("Failed to parse");
-    let catalog = po_file::parse(translation.as_ref()).expect("Error reading translation `.po` file!");
+    let catalog = po_file::parse(translation_path.as_ref()).expect("Error reading translation `.po` file!");
     let translated = replace::r_script(&script, &catalog);
-    dbg!(translated);
+    let translated_raw = render_script(&translated);
+    std::fs::write(target_path, translated_raw);
 }
 
 fn generate_template<PSource, PTarget>(source: PSource, target: PTarget)

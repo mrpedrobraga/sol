@@ -55,12 +55,11 @@ pub fn p_script(input: &str) -> IResult<&str, Script> {
     ))
 }
 
-fn p_comment(input: &str) -> IResult<&str, ()> {
+fn p_comment(input: &str) -> IResult<&str, String> {
     alt((
-        value((), pair(tag("--"), is_not("\n\r"))),
-        value((), (tag("--["), take_until("]--"), tag("]--"))),
-    ))
-    .parse(input)
+        preceded(tag("--"), is_not("\n\r").map(&str::to_string)),
+        delimited(tag("--["), take_until("]--").map(&str::to_string), tag("]--")),
+    )).parse(input)
 }
 
 pub fn p_let_scene(input: &str) -> IResult<&str, Scene> {
