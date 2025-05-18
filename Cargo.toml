@@ -21,8 +21,20 @@ clap = { version = "4.5.4", features = ["derive", "unicode", "color"] }
 asky = "0.1.1"
 clap_complete_command = "0.6.1"
 nom = "8.0.0"
-syn = "2.0.101"
-quote = "1.0.40"
-prettyplease = "0.2.32"
-proc-macro2 = "1.0.95"
 chumsky = "0.10.1"
+ariadne = "0.5.1"
+
+# Exporting .sol as rust source
+syn = { version = "2.0.101", optional = true }
+quote = { version = "1.0.40", optional = true }
+prettyplease = { version = "0.2.32", optional = true }
+proc-macro2 = { version = "1.0.95", optional = true }
+
+# Localizing .sol using PO files!
+polib = { version = "0.2.0", optional = true }
+pretty = "0.12.4"
+
+[features]
+default = ["localization"]
+localization = ["dep:polib"]
+export_rust = ["dep:syn", "dep:quote", "dep:prettyplease", "dep:proc-macro2"]

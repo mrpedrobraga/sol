@@ -1,0 +1,14 @@
+[remap]
+
+importer="minisol"
+type="SceneCollection"
+uid="uid://cp6ud04ovult"
+path="res://.godot/imported/mayor_office.sol-5e26422e726a8075a38d0ea8e2be71e0.res"
+
+[deps]
+
+source_file="res://packs/inner_voices_E01/scenes/translations_ja/mayor_office.sol"
+dest_files=["res://.godot/imported/mayor_office.sol-5e26422e726a8075a38d0ea8e2be71e0.res"]
+
+[params]
+

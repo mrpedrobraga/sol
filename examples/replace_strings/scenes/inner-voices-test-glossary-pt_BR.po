@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Portuguese (Brazil) (Inner Voices Test)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-18 00:56+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Portuguese (Brazil) <http://mrpedrobraga.com/inner_voices/w/"
+"projects/inner-voices-test/glossary/pt_BR/>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : ((n != 0 && n % "
+"1000000 == 0) ? 1 : 2);\n"
+"X-Generator: Weblate 5.11.4\n"
+
+#. Item display name.
+#, terminology
+msgctxt ""
+"Display name of item whose id is \"red_tea\" and description is \"Burning "
+"hot Hibiscus-Pepper tea. Eliminates status effects through means of "
+"combustion.\""
+msgid "Apple"
+msgstr "Maçã"
+
+#, terminology
+msgctxt ""
+"Description of item whose id is \"blue_tea\" and description is "
+"\"Butterfly pea tea. It's frozen solid.\""
+msgid "Ice Tea"
+msgstr "Chacolé"
+
+#. Context Display name of item whose id is "red_tea" and description is "Burning hot Hibiscus-Pepper tea. Eliminates status effects through means of combustion."
+#, terminology
+msgctxt "Item name."
+msgid "Crimson Tea"
+msgstr "Chá Carmim"

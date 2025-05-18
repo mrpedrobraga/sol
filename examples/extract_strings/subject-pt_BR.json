@@ -1,0 +1,27 @@
+{
+    "ft_shirt": {
+        "0": "Uma camisa listrada. Folgada demais para você."
+    },
+    "ft_bed": {
+        "0": "É sua cama."
+    },
+    "ft_game": {
+        "0": "Não é hora de jogar videogames."
+    },
+    "ft_bottom_wall": {
+        "0": "Você encara a parede de baixo...",
+        "1": "Que vista linda!"
+    },
+    "ft_window": {
+        "0": "Ah, que dia lindo!"
+    },
+    "ft_clothes": {
+        "0": "É seu guarda-roupas. Ver o que há dentro?",
+        "1": "!!!",
+        "2": "Está cheio de roupas!",
+        "3": "Mas disso você já sabia."
+    },
+    "ft_wave": {
+        "0": "Oi, $1!!! Bem vindo!!!"
+    }
+}

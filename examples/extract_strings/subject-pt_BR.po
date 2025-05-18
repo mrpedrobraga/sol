@@ -1,0 +1,47 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.1\n"
+"POT-Creation-Date: 2025-05-18 00:56+0000\n"
+"PO-Revision-Date: 2020-01-01\n"
+"Last-Translator: Pedro Braga\n"
+"Language-Team: Aurum Hour\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "ft_shirt.0"
+msgstr "Uma camisa listrada. Folgada demais pra você."
+
+msgid "ft_bed.0"
+msgstr "É sua cama."
+
+msgid "ft_game.0"
+msgstr "Não é hora de jogar video games."
+
+msgid "ft_bottom_wall.0"
+msgstr "Você encara a parede de baixo..."
+
+msgid "ft_bottom_wall.1"
+msgstr "Que vista bonita!"
+
+msgid "ft_window.0"
+msgstr "Ah, que dia lindo!"
+
+msgid "ft_clothes.0"
+msgstr "É seu guarda-roupas. Ver o que há dentro?"
+
+msgid "ft_clothes.1"
+msgstr "!!!"
+
+msgid "ft_clothes.2"
+msgstr "Está cheio de roupas!"
+
+msgid "ft_clothes.3"
+msgstr "Mas disso você já sabia."
+
+msgid "ft_wave.0"
+msgstr "Oi, $1!!! Bem vinda!!!"
+
