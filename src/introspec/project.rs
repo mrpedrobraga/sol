@@ -1,5 +1,6 @@
 use miette::Diagnostic;
-use std::{fs, path::PathBuf};
+use serde::{Deserialize, Serialize};
+use std::{collections::HashMap, fs, path::PathBuf};
 use thiserror::Error;
 
 /// Compilation of `.sol` can only happen within
@@ -30,8 +31,4 @@ impl Project {
 
         Ok(())
     }
-}
-
-pub struct File {
-    uri: String,
 }

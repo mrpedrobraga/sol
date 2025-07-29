@@ -1,9 +1,7 @@
-use polib::{catalog::Catalog, message::Message, metadata::CatalogMetadata,};
-use sol_lang::parser::{
-    ast::{Expression, ScenePart, Script, TextPart},
-};
+use polib::{catalog::Catalog, message::Message, metadata::CatalogMetadata};
+use sol_lang::parser::ast::{Expression, Module, ScenePart, TextPart};
 
-pub fn x_script(script: &Script) -> (Catalog, Catalog) {
+pub fn x_script(script: &Module) -> (Catalog, Catalog) {
     let mut template = Catalog::new(CatalogMetadata {
         project_id_version: "0.0.1".to_string(),
         pot_creation_date: "2025-05-18 00:56+0000".to_string(),
@@ -40,8 +38,18 @@ pub fn x_script(script: &Script) -> (Catalog, Catalog) {
         for (idx, string) in scene_strings.into_iter().enumerate() {
             let key = format!("{}.{}", scene.name, idx);
 
-            template.append_or_update(Message::build_singular().with_msgid(key.clone()).with_msgctxt(format!("Translation file for {}.", scene.name)).done());
-            source.append_or_update(Message::build_singular().with_msgid(key).with_msgstr(string).done());
+            template.append_or_update(
+                Message::build_singular()
+                    .with_msgid(key.clone())
+                    .with_msgctxt(format!("Translation file for {}.", scene.name))
+                    .done(),
+            );
+            source.append_or_update(
+                Message::build_singular()
+                    .with_msgid(key)
+                    .with_msgstr(string)
+                    .done(),
+            );
         }
     }
 

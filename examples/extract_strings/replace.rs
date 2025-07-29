@@ -7,9 +7,9 @@ use polib::{
     message::Message,
     metadata::CatalogMetadata,
 };
-use sol_lang::parser::ast::{Expression, ScenePart, Script, TextPart};
+use sol_lang::parser::ast::{Expression, Module, ScenePart, TextPart};
 
-pub fn r_script(script: &Script, catalog: &Catalog) -> Script {
+pub fn r_script(script: &Module, catalog: &Catalog) -> Module {
     let mut output = script.clone();
     for scene in output.scenes.iter_mut() {
         let mut text_idx = 0usize;

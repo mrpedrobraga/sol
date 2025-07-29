@@ -1,6 +1,6 @@
 use serde_json::{json, to_string_pretty};
 use sol_lang::parser::{
-    ast::{Expression, ScenePart, Script, TextPart},
+    ast::{Expression, Module, ScenePart, TextPart},
     nom::p_script,
 };
 use std::collections::HashMap;
@@ -18,7 +18,7 @@ fn main() {
     );
 }
 
-fn x_script(script: &Script) -> serde_json::Value {
+fn x_script(script: &Module) -> serde_json::Value {
     let mut scene_texts: HashMap<String, Vec<String>> = HashMap::new();
 
     for scene in script.scenes.iter() {
@@ -35,21 +35,21 @@ fn x_script(script: &Script) -> serde_json::Value {
     })
 }
 
-fn x_scene_part(mut strings: &mut Vec<String>, scene_part: &ScenePart) {
+fn x_scene_part(strings: &mut Vec<String>, scene_part: &ScenePart) {
     match scene_part {
-        ScenePart::Dialogue(dialogue) => x_dialogue(&mut strings, dialogue.parts.iter()),
-        ScenePart::Narration(narration) => x_dialogue(&mut strings, narration.parts.iter()),
+        ScenePart::Dialogue(dialogue) => x_dialogue(strings, dialogue.parts.iter()),
+        ScenePart::Narration(narration) => x_dialogue(strings, narration.parts.iter()),
         ScenePart::Prompt(prompt) => {
             prompt.options.iter().for_each(|option| {
-                x_dialogue(&mut strings, option.text.iter());
+                x_dialogue(strings, option.text.iter());
                 option
                     .content
                     .iter()
-                    .for_each(|scene_part| x_scene_part(&mut strings, scene_part));
+                    .for_each(|scene_part| x_scene_part(strings, scene_part));
             });
         }
         ScenePart::Expression(expression) => {
-            x_expression(&mut strings, expression);
+            x_expression(strings, expression);
         }
 
         // Nothing for these...
@@ -58,7 +58,7 @@ fn x_scene_part(mut strings: &mut Vec<String>, scene_part: &ScenePart) {
     }
 }
 
-fn x_dialogue<'a, I>(mut strings: &mut Vec<String>, text_parts: I)
+fn x_dialogue<'a, I>(strings: &mut Vec<String>, text_parts: I)
 where
     I: Iterator<Item = &'a TextPart>,
 {
@@ -67,7 +67,7 @@ where
             TextPart::Text(text) => Some(text.clone()),
             TextPart::Expression(expression) => {
                 *expression_idx += 1;
-                x_expression(&mut strings, expression);
+                x_expression(strings, expression);
                 Some(format!("${}", expression_idx))
             }
         })
@@ -77,6 +77,6 @@ where
 }
 
 #[allow(unused)]
-fn x_expression(strings: &mut Vec<String>, expression: &Expression) {
+fn x_expression(strings: &mut [String], expression: &Expression) {
     // Nothing for expressions...
 }

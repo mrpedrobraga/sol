@@ -2,10 +2,13 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
-pub struct Script {
+pub struct Module {
     pub scenes: Vec<Scene>,
     pub fields: HashMap<String, Expression>,
 }
+
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+pub struct ModuleItem {}
 
 pub enum ScriptPart {
     Scene(Scene),
@@ -55,6 +58,7 @@ pub struct Narration {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Prompt {
+    pub text: Option<Vec<TextPart>>,
     pub options: Vec<PromptOption>,
 }
 
@@ -72,7 +76,7 @@ pub enum Expression {
     Int(i32),
     Float(f32),
     Boolean(bool),
-    Text(String),
+    Text(Vec<TextPart>),
     Symbol(Symbol),
 }
 

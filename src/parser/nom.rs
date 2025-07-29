@@ -1,14 +1,16 @@
 use std::collections::HashMap;
 
 use super::ast::{
-    Dialogue, Expression, Narration, Scene, ScenePart, Script, ScriptPart, SpeakerChangeMarker,
-    Symbol, TextPart,
+    Dialogue, Expression, Module, Narration, Prompt, PromptOption, Scene, ScenePart, ScriptPart,
+    SpeakerChangeMarker, Symbol, TextPart,
 };
+use asky::Text;
 use nom::{
     branch::alt,
-    bytes::complete::{is_not, tag, take_until},
+    bytes::complete::{escaped, is_not, tag, take_until},
     character::complete::{
-        alpha1, alphanumeric1, char, multispace0, multispace1, newline, one_of, space0, space1,
+        alpha1, alphanumeric1, char, multispace0, multispace1, newline, none_of, one_of, space0,
+        space1,
     },
     combinator::{map, opt, recognize, value},
     multi::{many0, many0_count, many1, separated_list0, separated_list1},
@@ -17,7 +19,7 @@ use nom::{
     IResult, Parser,
 };
 
-pub fn p_script(input: &str) -> IResult<&str, Script> {
+pub fn p_script(input: &str) -> IResult<&str, Module> {
     let (input, script_entries) = delimited(
         multispace0,
         separated_list0(
@@ -35,7 +37,7 @@ pub fn p_script(input: &str) -> IResult<&str, Script> {
     Ok((
         input,
         script_entries.into_iter().fold(
-            Script {
+            Module {
                 scenes: Vec::new(),
                 fields: HashMap::new(),
             },
@@ -58,8 +60,13 @@ pub fn p_script(input: &str) -> IResult<&str, Script> {
 fn p_comment(input: &str) -> IResult<&str, String> {
     alt((
         preceded(tag("--"), is_not("\n\r").map(&str::to_string)),
-        delimited(tag("--["), take_until("]--").map(&str::to_string), tag("]--")),
-    )).parse(input)
+        delimited(
+            tag("--["),
+            take_until("]--").map(&str::to_string),
+            tag("]--"),
+        ),
+    ))
+    .parse(input)
 }
 
 pub fn p_let_scene(input: &str) -> IResult<&str, Scene> {
@@ -87,7 +94,7 @@ fn p_scene_part(input: &str) -> IResult<&str, ScenePart> {
         map(p_dialogue, ScenePart::Dialogue),
         map(p_narration, ScenePart::Narration),
         map(p_expression, ScenePart::Expression),
-        //map(parse_prompt, SceneContent::Prompt),
+        map(p_prompt, ScenePart::Prompt),
     ))
     .parse(input)
 }
@@ -136,7 +143,8 @@ fn p_narration(input: &str) -> IResult<&str, Narration> {
 fn p_text_part(input: &str) -> IResult<&str, TextPart> {
     alt((
         // Normal text
-        map(is_not("\r\n{"), |s: &str| {
+        //map(is_not("\r\n{"), |s: &str| TextPart::Text(s.to_string())),
+        map(escaped(none_of("\r\n{\"\\"), '\\', tag("\"")), |s: &str| {
             TextPart::Text(s.to_string())
         }),
         // Interpolation
@@ -147,7 +155,35 @@ fn p_text_part(input: &str) -> IResult<&str, TextPart> {
     .parse(input)
 }
 
-//fn parse_prompt(input: &str) -> IResult<&str, Prompt> {}
+fn p_prompt(input: &str) -> IResult<&str, Prompt> {
+    map(
+        delimited(
+            tag("prompt"),
+            (
+                terminated(opt(preceded(space1, many1(p_text_part))), multispace1),
+                separated_list0(multispace0, p_prompt_option),
+            ),
+            (multispace0, tag("end")),
+        ),
+        |(text, options)| Prompt { text, options },
+    )
+    .parse(input)
+}
+
+fn p_prompt_option(input: &str) -> IResult<&str, PromptOption> {
+    map(
+        delimited(
+            tag("option"),
+            (
+                delimited(space1, many1(p_text_part), multispace1),
+                separated_list0(multispace0, p_scene_part),
+            ),
+            (multispace0, tag("end")),
+        ),
+        |(text, content)| PromptOption { text, content },
+    )
+    .parse(input)
+}
 
 fn p_expression(input: &str) -> IResult<&str, Expression> {
     alt((
@@ -160,11 +196,8 @@ fn p_expression(input: &str) -> IResult<&str, Expression> {
             separated_pair(p_integer_decimal, space1, p_identifier),
             |(i, unit)| Expression::Unit(Box::new(Expression::Int(i)), unit.to_string()),
         ),
-        map(p_integer_decimal, |s| Expression::Int(s)),
-        map(
-            delimited(tag("\""), map(is_not("\""), &str::to_string), tag("\"")),
-            Expression::Text,
-        ),
+        map(p_integer_decimal, Expression::Int),
+        map(p_string, Expression::Text),
         map(
             (
                 map(p_identifier, &str::to_string),
@@ -182,6 +215,10 @@ fn p_expression(input: &str) -> IResult<&str, Expression> {
         map(p_symbol, Expression::Symbol),
     ))
     .parse(input)
+}
+
+fn p_string(input: &str) -> IResult<&str, Vec<TextPart>> {
+    delimited(tag("\""), many1(p_text_part), tag("\"")).parse(input)
 }
 
 fn p_integer_decimal(input: &str) -> IResult<&str, i32> {
@@ -238,7 +275,7 @@ fn p_identifier(input: &str) -> IResult<&str, &str> {
 
 mod tests {
     use super::p_script;
-    use crate::parser::ast::{Dialogue, Scene, ScenePart, Script, TextPart};
+    use crate::parser::ast::{Dialogue, Module, Scene, ScenePart, TextPart};
     use std::collections::HashMap;
 
     #[test]
@@ -247,7 +284,7 @@ mod tests {
             p_script(""),
             Ok((
                 "",
-                Script {
+                Module {
                     scenes: Vec::new(),
                     fields: HashMap::new()
                 }
@@ -263,7 +300,7 @@ mod tests {
             script,
             Ok((
                 "",
-                Script {
+                Module {
                     fields: HashMap::new(),
                     scenes: vec![Scene {
                         name: "main".to_owned(),

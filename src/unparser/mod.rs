@@ -1,16 +1,16 @@
-use std::{io::stdout, rc::Rc};
+use crate::parser::ast::{Expression, Scene, ScenePart, Module, TextPart};
 use pretty::termcolor::{Color, ColorChoice, ColorSpec, StandardStream};
-use crate::parser::ast::{Expression, Scene, ScenePart, Script, TextPart};
 use pretty::{Doc, RcDoc, RenderAnnotated};
+use std::{io::stdout, rc::Rc};
 
-pub fn render_script(script: &Script) -> String {
+pub fn render_script(script: &Module) -> String {
     let mut bytes = Vec::new();
     let output = print_script(script);
     output.render(80, &mut bytes);
     String::from_utf8(bytes).expect("Failed to render script as printer didn't output valid UTF-8.")
 }
 
-pub fn print_script(script: &Script) -> RcDoc {
+pub fn print_script(script: &Module) -> RcDoc {
     RcDoc::intersperse(script.scenes.iter().map(print_scene), "\n\n")
 }
 
@@ -18,7 +18,10 @@ pub fn print_scene(scene: &Scene) -> RcDoc {
     RcDoc::text("scene ")
         .append(scene.name.clone())
         .append(RcDoc::hardline())
-        .append(RcDoc::intersperse(scene.content.iter().map(print_scene_part), Doc::hardline()).group()).nest(2)
+        .append(
+            RcDoc::intersperse(scene.content.iter().map(print_scene_part), Doc::hardline()).group(),
+        )
+        .nest(2)
         .append(RcDoc::hardline())
         .append("end")
 }
@@ -59,7 +62,7 @@ where
         text_parts.map(|part| match part {
             TextPart::Text(text) => RcDoc::text(text),
             TextPart::Expression(expression) => RcDoc::text("{")
-                .append(print_expression(&expression))
+                .append(print_expression(expression))
                 .append(RcDoc::text("}")),
         }),
         RcDoc::nil(),
@@ -78,10 +81,11 @@ pub fn print_expression(expression: &Expression) -> RcDoc {
         Expression::Int(val) => RcDoc::text(val.to_string()),
         Expression::Float(val) => RcDoc::text(val.to_string()),
         Expression::Boolean(val) => RcDoc::text(val.to_string()),
-        Expression::Text(val) => RcDoc::text(val.to_string()),
+        Expression::Text(text_parts) => print_dialogue(text_parts.iter()),
         Expression::Symbol(symbol) => RcDoc::intersperse(
             symbol.path.iter().map(|node| RcDoc::text(node.as_str())),
             RcDoc::text("."),
-        ).group(),
+        )
+        .group(),
     }
 }
