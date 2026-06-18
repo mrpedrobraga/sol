@@ -10,11 +10,11 @@ pub fn render_script(script: &Module) -> String {
     String::from_utf8(bytes).expect("Failed to render script as printer didn't output valid UTF-8.")
 }
 
-pub fn print_script(script: &Module) -> RcDoc {
+pub fn print_script(script: &Module) -> RcDoc<'_> {
     RcDoc::intersperse(script.scenes.iter().map(print_scene), "\n\n")
 }
 
-pub fn print_scene(scene: &Scene) -> RcDoc {
+pub fn print_scene(scene: &Scene) -> RcDoc<'_> {
     RcDoc::text("scene ")
         .append(scene.name.clone())
         .append(RcDoc::hardline())
@@ -26,7 +26,7 @@ pub fn print_scene(scene: &Scene) -> RcDoc {
         .append("end")
 }
 
-pub fn print_scene_part(scene_part: &ScenePart) -> RcDoc {
+pub fn print_scene_part(scene_part: &ScenePart) -> RcDoc<'_> {
     match scene_part {
         ScenePart::SpeakerChangeMarker(speaker_change_marker) => RcDoc::text("[")
             .append(
@@ -69,7 +69,7 @@ where
     )
 }
 
-pub fn print_expression(expression: &Expression) -> RcDoc {
+pub fn print_expression(expression: &Expression) -> RcDoc<'_> {
     match expression {
         Expression::Call { name, args } => RcDoc::text(name)
             .append(RcDoc::text("("))
